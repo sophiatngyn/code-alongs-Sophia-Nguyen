@@ -1,0 +1,101 @@
+---
+title: "Bootstrapping Duke Forest houses"
+---
+
+In this code along, we will use bootstrapping to construct confidence intervals.
+
+## Packages
+
+We will use **tidyverse** and **tidymodels** for data exploration and modeling, respectively, and the **openintro** package for the data.
+
+```{r}
+#| label: load-packages
+#| message: false
+library(tidyverse)
+library(tidymodels)
+library(openintro)
+```
+
+## Data
+
+The data are on houses that were sold in the Duke Forest neighborhood of Durham, NC around November 2020.
+It was originally scraped from Zillow, and can be found in the `duke_forest` data set in the **openintro** R package.
+
+```{r}
+#| label: glimpse-data
+glimpse(duke_forest)
+```
+
+## Model
+
+Fit a linear model predicting price of houses from their area.
+
+```{r}
+#| label: fit-model
+# add code here
+```
+
+## Bootstrap confidence interval
+
+1. Calculate the observed fit (slope):
+
+```{r}
+#| label: observed-fit
+# add code here
+```
+
+2. Take *n* bootstrap samples and fit models to each one:
+
+```{r}
+#| label: bootstrap
+# add code here
+```
+
+-   Why do we set a seed before taking the bootstrap samples?
+
+To get the same random samples each time we run the code / render the document.
+
+-   Make a histogram of the bootstrap samples to visualize the bootstrap distribution.
+
+```{r}
+#| label: boot-hist
+# add code here
+```
+
+3. Compute the 95% confidence interval as the middle 95% of the bootstrap distribution:
+
+```{r}
+#| label: calc-ci
+# add code here
+```
+
+## Changing confidence level
+
+Modify the code from Step 3 to create a 90% confidence interval.
+
+```{r}
+#| label: 90-ci
+# add code here
+```
+
+Modify the code from Step 3 to create a 99% confidence interval.
+
+```{r}
+#| label: 99-ci
+# add code here
+```
+
+-   Which confidence level produces the most accurate confidence interval (90%, 95%, 99%)?
+    Explain.
+  
+Add response here.
+
+-   Which confidence level produces the most precise confidence interval (90%, 95%, 99%)?
+    Explain
+
+Add response here.
+
+-   If we want to be very certain that we capture the population parameter, should we use a wider or a narrower interval?
+    What drawbacks are associated with using a wider interval?
+
+Add response here.
