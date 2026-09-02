@@ -13,6 +13,7 @@ We will use the **tidyverse** packages for data wrangling and visualization and 
 
 ```{r}
 #| label: load-packages
+#| message: false
 library(tidyverse)
 library(palmerpenguins)
 ```
@@ -24,7 +25,7 @@ Let's `glimpse()` at it.
 
 ```{r}
 #| label: glimpse
-# add code here
+glimpse(penguins)
 ```
 
 # Penguin bills
@@ -33,7 +34,8 @@ Let's `glimpse()` at it.
 
 ```{r}
 #| label: bill-depth-width
-# add code here
+ggplot(penguins, aes(x = bill_depth_mm, y = bill_length_mm)) +
+    geom_point()
 ```
 
 Add interpretation here.
