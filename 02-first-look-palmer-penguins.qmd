@@ -35,18 +35,22 @@ glimpse(penguins)
 ```{r}
 #| label: bill-depth-width
 ggplot(penguins, aes(x = bill_depth_mm, y = bill_length_mm)) +
-    geom_point()
+    geom_point() + 
+    geom_smooth(method = "lm")
 ```
 
-Add interpretation here.
+Negative, somewhat weak relationship between bill depth and bill lengths of penguins.
 
 2.  Create a scatterplot of `bill_depth` vs. `bill_length`s of `penguin`s, colored by `species`. Overlay a line of best fit. Describe the relationship between the two variables for each of the species.
 
 ```{r}
 #| label: bill-depth-width-species
-# add code here
+ggplot(penguins, aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm")
 ```
 
-Add interpretation here.
+Positive relationship between bill depth and bill length for each species.
 
 3.  Reflect on the seemingly contradictory findings from the two visualizations you've created. Which one do you believe more, and why?
+Simpson's Paradox - relationship is seemingly something else due to a confounding variable of you combining all the groups together. Actually, the true relationship between variables is different once you categorize the groups and separate accordingly.
