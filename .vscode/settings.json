@@ -1,5 +1,5 @@
 {
     "console.assistantActions.enabled": false,
     "ai.enabled": false,
-    "quarto.inlineOutput.enabled": false
+    "quarto.inlineOutput.enabled": true
 }
