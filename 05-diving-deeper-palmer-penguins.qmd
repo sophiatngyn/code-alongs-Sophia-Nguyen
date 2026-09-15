@@ -26,7 +26,7 @@ Let's `glimpse()` at it.
 
 ```{r}
 #| label: glimpse
-# add code here
+glimpse(penguins)
 ```
 
 # Visualizing penguin weights
@@ -37,7 +37,7 @@ Let's `glimpse()` at it.
 Analyzing the a single variable is called **univariate** analysis.
 :::
 
-Create visualizations of the distribution of `weight`s of penguins.
+Create visualizations of the distribution of `body_mass_g`s of penguins.
 
 ### Exercise 1
 
@@ -46,7 +46,8 @@ Set an appropriate binwidth.
 
 ```{r}
 #| label: histogram-weight
-# add code here
+ggplot(penguins, aes(x = body_mass_g)) +
+    geom_histogram(binwidth = 250)
 ```
 
 ### Exercise 2
@@ -55,15 +56,16 @@ Make a boxplot.
 
 ```{r}
 #| label: boxplot-weight
-# add code here
+ggplot(penguins, aes(x = body_mass_g)) +
+    geom_boxplot() 
 ```
 
 ### Exercise 3
 
 Based on these, determine if each of the following statements about the shape of the distribution is true or false.
 
--   The distribution of penguin weights in this sample is left skewed.
--   The distribution of penguin weights in this sample is unimodal.
+-   The distribution of penguin weights in this sample is left skewed. - FALSE
+-   The distribution of penguin weights in this sample is unimodal. - TRUE
 
 ## Two variables
 
@@ -71,7 +73,7 @@ Based on these, determine if each of the following statements about the shape of
 Analyzing the relationship between two variables is called **bivariate** analysis.
 :::
 
-Create visualizations of the distribution of `weight`s of penguins by `species`.
+Create visualizations of the distribution of `body_mass_g`s of penguins by `species`.
 
 ### Exercise 4
 
@@ -80,7 +82,8 @@ Set an appropriate binwidth.
 
 ```{r}
 #| label: histogram-weight-species
-# add code here
+ggplot(penguins, aes(x = body_mass_g)) +
+    geom_histogram(binwidth = 250)
 ```
 
 ### Exercise 5
@@ -90,7 +93,9 @@ Set an appropriate binwidth, add color as you see fit, and turn off legends if n
 
 ```{r}
 #| label: histogram-weight-species-facet
-# add code here
+ggplot(penguins, aes(x = body_mass_g)) +
+    geom_histogram(binwidth = 250) +
+    facet_wrap(~species, ncol = 1)
 ```
 
 ### Exercise 6
@@ -100,7 +105,8 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: boxplot-weight-species
-# add code here
+ggplot(penguins, aes(x = body_mass_g, y = species)) +
+    geom_boxplot() 
 ```
 
 ### Exercise 7
@@ -110,7 +116,8 @@ Add color as you see fit.
 
 ```{r}
 #| label: density-weight-species
-# add code here
+ggplot(penguins, aes(x = body_mass_g, fill = species)) +
+    geom_density(alpha = 0.5) 
 ```
 
 ### Exercise 8
@@ -120,7 +127,8 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: violin-weight-species
-# add code here
+ggplot(penguins, aes(y = body_mass_g, x = species)) +
+    geom_violin() 
 ```
 
 ### Exercise 9
@@ -130,7 +138,8 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: jitter-weight-species
-# add code here
+ggplot(penguins, aes(y = body_mass_g, x = species)) + 
+    geom_jitter()
 ```
 
 ### Exercise 10
@@ -140,7 +149,8 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: beeswarm-weight-species
-# add code here
+ggplot(penguins, aes(y = body_mass_g, x = species)) + 
+    geom_beeswarm()
 ```
 
 ### Exercise 11
@@ -152,7 +162,9 @@ Finally, add informative labels.
 
 ```{r}
 #| label: multi-geoms
-# add code here
+ggplot(penguins, aes(y = body_mass_g, x = species)) + 
+    geom_beeswarm() +
+    geom_boxplot(alpha = 0.5)   
 ```
 
 ## Multiple variables
