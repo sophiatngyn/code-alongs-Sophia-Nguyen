@@ -151,4 +151,4 @@ ggplot(population_summary, aes(y = continent, x = total_population)) +
 
 -   What additional improvements would you like to make to this plot.
 
-Add response here.
+Reorder y-axis in ascending/descending order by country populations.
