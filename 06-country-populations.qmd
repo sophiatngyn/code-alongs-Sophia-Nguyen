@@ -37,12 +37,16 @@ population <- read_csv(
 
 Let's take a look at the data.
 
-```{r}
-#| label: view-population-data
-population
-```
-
 # Analysis
+
+
+## Data prep
+
+```{r}
+#| label: popultaion-2023
+population |>
+
+```
 
 ## Tidying
 

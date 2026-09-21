@@ -66,36 +66,52 @@ continents
 
 ```{r}
 #| label: population-2023
-# add code here
+population <- population |> 
+    select(country_name, country_code, `2023`) |>
+    rename("population" = `2023`)
 ```
 
 -   Which variable(s) will we use to join the `population` and `continents` data frames?
 
-Add response here.
+`population` data frame -> `country_code` variable
+`continents` data frame _> `code` variable
 
 -   We want to create a new data frame that keeps all rows and columns from `population` and brings in the corresponding information from `continents`. Which join function should we use?
 
-Add response here.
+`left_join()`, first data frame in pipeline is `population`
 
 -   Join the two data frames and name assign the joined data frame to a new data frame `population_continents`.
 
 ```{r}
 #| label: join-population-continents
-# add code here
+population_continents <- population |>
+    left_join(continents, by = join_by(country_code == code))
 ```
 
 -   Take a look at the newly created `population_continent` data frame. There are some countries that were not in `continents`. First, identify which countries these are (they will have `NA` values for `continent`).
 
 ```{r}
 #| label: data-inspect
-# add code here
+population_continents |>
+    filter(is.na(continent))
 ```
 
 -   All of these countries are actually in the `continents` data frame, but under different names. So, let's clean that data first by updating the country names in the `population` data frame in a way they will match the `continents` data frame, and then joining them, using a `case_when()` statement in `mutate()`. At the end, check that all countries now have continent information.
 
 ```{r}
 #| label: data-clean
-# add code here
+population_continents <- population |>
+    mutate(
+        country_code = case_when(
+            country_code == "CHI" ~ "OWID_CIS",
+            country_code == "XKX" ~ "OWID_KOS",
+            .default = country_code
+        )
+    ) |>
+    left_join(continents, by = join_by(country_code == code))
+
+population_continents |>
+    filter(is.na(continent))
 ```
 
 -   Which continent do you think has the highest population? Which do you think has the second highest? The lowest?
@@ -106,7 +122,10 @@ Add response here.
 
 ```{r}
 #| label: population-continents-sum
-# add code here
+population_sumary <- population_continents |>
+    group_by(continent) |>
+    summarize(total_population = sum(population)) |>
+    arrange(desc(total_population))
 ```
 
 ## Visualization
