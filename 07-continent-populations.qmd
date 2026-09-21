@@ -122,7 +122,7 @@ Add response here.
 
 ```{r}
 #| label: population-continents-sum
-population_sumary <- population_continents |>
+population_summary <- population_continents |>
     group_by(continent) |>
     summarize(total_population = sum(population)) |>
     arrange(desc(total_population))
@@ -134,7 +134,8 @@ population_sumary <- population_continents |>
 
 ```{r}
 #| label: population-summary-bar
-# add code here
+ggplot(population_summary, aes(x = continent, y = total_population)) +
+    geom_col()
 ```
 
 -   Recreate the following plot, which is commonly referred to as a **lollipop plot**. Hint: Start with the `point`s, then try adding the `segment`s, then add axis labels and `caption`, update the x scale.
@@ -143,7 +144,9 @@ population_sumary <- population_continents |>
 
 ```{r}
 #| label: population-summary-lollipop-2023
-# add code here
+ggplot(population_summary, aes(y = continent, x = total_population)) +
+    geom_point() +
+    geom_segment(aes(xend = 0, yend = continent)) 
 ```
 
 -   What additional improvements would you like to make to this plot.
