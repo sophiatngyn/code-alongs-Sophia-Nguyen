@@ -50,21 +50,30 @@ co2_emissions
 
 ```{r}
 #| label: pivot
-# add code here
+co2_emissions_longer <- co2_emissions |>
+    pivot_longer(
+        cols = !country,
+        names_to = "answer_type", 
+        values_to = "percentage"
+    )
 ```
 
 -   Create a stacked bar plot of response type by countries.
 
 ```{r}
 #| label: stacked-bar-plot
-# add code here
+ggplot(co2_emissions_longer, aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col()
 ```
 
 -   In the original plot, the levels of `answer_type` are in the order Very wrong, Wrong, and Correct. Update the previous plot reorder the levels in this order.
 
 ```{r}
 #| label: reorder-answer-type
-# add code here
+co2_emissions_longer |>
+    mutate(answer_type = fct_rev(fct_relevel(answer_type, "Very wrong", "Wrong", "Correct"))) |>
+    ggplot(aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col()
 ```
 
 -   Update the colors of the plot to match the original plot:
@@ -74,26 +83,104 @@ co2_emissions
 
 ```{r}
 #| label: colors
-# add code here
+co2_emissions_longer |>
+    mutate(answer_type = fct_rev(fct_relevel(answer_type, "Very wrong", "Wrong", "Correct"))) |>
+    ggplot(aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col() +
+    scale_fill_manual(
+        values = c(
+            "Very wrong" = "#96283A",
+            "Wrong" =  "#DB4C67",
+            "Correct" = "#C8F0BF"
+        )
+    )
 ```
 
 -   Move the legend to the bottom and make sure the levels appear in the same order they appear in the plot.
 
 ```{r}
 #| label: move-legend
-# add code here
+co2_emissions_longer |>
+    mutate(answer_type = fct_rev(fct_relevel(answer_type, "Very wrong", "Wrong", "Correct"))) |>
+    ggplot(aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col() +
+    scale_fill_manual(
+        values = c(
+            "Very wrong" = "#96283A",
+            "Wrong" =  "#DB4C67",
+            "Correct" = "#C8F0BF"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
+        theme(legend.position = "bottom")
+
 ```
 
 -   Reorder countries to match the original plot -- in increasing order of corect percentages.
 
 ```{r}
-#| label: reorder-country
-# add code here
+co2_emissions_longer |>
+    mutate(
+        answer_type = fct_rev(fct_relevel(
+            answer_type, 
+            "Very wrong",
+             "Wrong", 
+             "Correct")),
+    country = fct_rev(fct_relevel(
+        country, 
+        "Türkiye", 
+        "Columbia", 
+        "Sweden", 
+        "Germany", 
+        "United Kingdom", 
+        "United States", 
+        "Kenya", 
+        "Pakistan")) 
+    )|>
+    ggplot(aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col() +
+    scale_fill_manual(
+        values = c(
+            "Very wrong" = "#96283A",
+            "Wrong" =  "#DB4C67",
+            "Correct" = "#C8F0BF"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
+        theme(legend.position = "bottom")
 ```
 
 -   Update labels and other elements of the plot to get it closer to the original plot.
 
 ```{r}
 #| label: update-labels
-# add code here
+co2_emissions_longer |>
+    mutate(
+        answer_type = fct_rev(fct_relevel(
+            answer_type, 
+            "Very wrong",
+             "Wrong", 
+             "Correct")),
+    country = fct_rev(fct_relevel(
+        country, 
+        "Türkiye", 
+        "Columbia", 
+        "Sweden", 
+        "Germany", 
+        "United Kingdom", 
+        "United States", 
+        "Kenya", 
+        "Pakistan")) 
+    )|>
+    ggplot(aes(y = country, x = percentage, fill = answer_type)) +
+    geom_col() +
+    scale_fill_manual(
+        values = c(
+            "Very wrong" = "#96283A",
+            "Wrong" =  "#DB4C67",
+            "Correct" = "#C8F0BF"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
+        theme(legend.position = "bottom")
 ```
