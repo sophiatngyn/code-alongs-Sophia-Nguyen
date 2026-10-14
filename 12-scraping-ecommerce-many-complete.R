@@ -13,8 +13,8 @@ bow("https://www.scrapingcourse.com")
 
 # read pages ----
 
-page_nos <- 1:5
-urls <- glue("https://www.scrapingcourse.com/ecommerce/page/{page_nos}/")
+pages <- 1:5
+urls <- glue("https://www.scrapingcourse.com/ecommerce/page/{pages}/")
 
 # function to scrape a page ----
 

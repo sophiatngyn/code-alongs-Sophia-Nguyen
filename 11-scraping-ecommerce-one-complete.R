@@ -3,8 +3,8 @@
 # load packages ----
 
 library(tidyverse)
-library(rvest)
-library(polite)
+library(rvest) # harvests from the web
+library(polite) # are we allowed to scrape?
 
 # check for scrape-ability ----
 
@@ -13,6 +13,7 @@ bow("https://www.scrapingcourse.com/")
 # read page ----
 
 url <- "https://www.scrapingcourse.com/ecommerce/"
+read_html(url) # add date
 page <- read_html(url)
 
 # titles ----
@@ -30,7 +31,7 @@ urls <- page |>
 # prices ----
 
 prices <- page |>
-  html_elements(".price") |>
+  html_elements("bdi") |>
   html_text() |>
   str_remove("\\$") |>
   as.numeric()
@@ -46,13 +47,3 @@ items <- tibble(
 # write items ----
 
 write_csv(items, file = "data/items.csv")
-
-
-
-
-
-
-
-
-
-
