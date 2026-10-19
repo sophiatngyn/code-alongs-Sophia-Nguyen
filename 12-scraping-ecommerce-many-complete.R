@@ -19,8 +19,6 @@ urls <- glue("https://www.scrapingcourse.com/ecommerce/page/{pages}/")
 # function to scrape a page ----
 
 scrape_items <- function(url){
-  
-  # read page
   page <- read_html(url)
   
   # titles
@@ -47,20 +45,26 @@ scrape_items <- function(url){
     price = prices
   )
   
+  #Sys.sleep(3)
 }
+
+  
+  
 
 # test function ----
 
-scrape_items(urls[1])
+items_from_page_1 <- scrape_items(urls[1])
 scrape_items(urls[2])
-scrape_items(urls[3])
+scrape_items(urls[5])
+
 
 # map function over urls ----
 
-items_80 <- map(urls, scrape_items) |>
+items <- map(urls, scrape_items) |>
   list_rbind()
+
 
 # write data ----
 
-write_csv(items_80, "data/items-80.csv")
+write_csv(items, "data/items.csv")
 
