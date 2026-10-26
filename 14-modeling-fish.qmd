@@ -58,7 +58,12 @@ We're going to investigate the relationship between the weights and heights of f
 
 ```{r}
 #| label: plot-hw
-# add code here
+ggplot(fish, aes(x = height, y = weight)) +
+    geom_point() +
+    labs(
+        x = "Height (cm)",
+        y = "Weight (g)"
+    )
 ```
 
 -   If you were to draw a a straight line to best represent the relationship between the heights and weights of fish, where would it go? Why?

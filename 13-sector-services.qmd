@@ -29,7 +29,7 @@ These data come from [Survation](https://www.survation.com/) and were recreated 
 #| label: load-population-data
 #| message: false
 survation <- read_csv(
-  "https://data-science-with-r.github.io/data/survation.csv"
+    "https://data-science-with-r.github.io/data/survation.csv"
 )
 ```
 
@@ -46,7 +46,7 @@ survation
 
 What is misleading about this graph?
 
-Add response here.
+Percentages indicated on the plot don't match the percentage of the length of the segment taken up in each bar.
 
 ## Recreate and improve
 
@@ -54,7 +54,17 @@ Add response here.
 
 ```{r}
 #| label: calculate-percentages
-# add code here
+survation_longer <- survation |>
+  pivot_longer(
+    cols = !ID,
+    names_to = "service",
+    values_to = "sector"
+  )
+
+survation_longer |>
+  count(service, sector) |>
+  group_by(service) |>
+  mutate(prop = n / sum(n))
 ```
 
 -   Create an improved version of the visualization. Your improved visualization:
@@ -71,9 +81,24 @@ Add response here.
 
 ```{r}
 #| label: recreate
-# add code here
+
+survation_longer |>
+  mutate(
+    service = fct_relevel(service, "Royal Mail", "Energy", "Water", "Rail")
+    ) |>
+    ggplot(aes(y = service, fill = sector)) +
+    geom_bar(position = "fill") +
+    scale_fill_manual(
+      values = c(
+        "Don't know" = "gray",
+        "Private sector" = "#FF3205",
+        "Public sector" = "#006697"
+      )
+    ) +
+    theme(legend.position = "bottom") +
+    guides(fill = guide_legend(reverse = TRUE))
 ```
 
 -   How does the improved visualization look different than the original? Does it send a different message at a first glance?
 
-Add response here.
+
