@@ -62,12 +62,40 @@ glimpse(loans)
 
 ```{r}
 #| label: explore-loans
-# add code here
+ggplot(loans, aes(x = interest_rate)) +
+  geom_histogram(binwidth = 2)
+
+loans |>
+  summarize(
+    mean = mean(interest_rate),
+    sd = sd(interest_rate),
+    median = median(interest_rate),
+    q1 = quantile(interest_rate, 0.25),
+    q3 = quantile(interest_rate, 0.75),
+    IGR = q3 - q1
+  )
+
+ggplot(loans, aes(x = loan_amount)) +
+  geom_histogram(binwidth = 2500)
+
+loans |>
+  summarize(
+    mean = mean(loan_amount),
+    sd = sd(loan_amount),
+    median = median(loan_amount),
+    q1 = quantile(loan_amount, 0.25),
+    q3 = quantile(loan_amount, 0.75),
+    IGR = q3 - q1
+  )
 ```
 
 ```{r}
 #| label: explore-borrowers
-# add code here
+ggplot(loans, aes(x = debt_to_income)) + 
+  geom_histogram()
+
+ggplot(loans, aes(x = bankruptcy)) + 
+  geom_bar()
 ```
 
 ## Interest rate vs. credit utilization
@@ -76,21 +104,26 @@ glimpse(loans)
 
 ```{r}
 #| label: rate-util-fit
-# add code here
+int_util_fit <- linear_reg() |>
+  fit(interest_rate ~ credit_util, data = loans)
+
+tidy(int_util_fit)
 ```
 
 -   Visualize the model.
 
 ```{r}
 #| label: rate-util-plot
-# add code here
+ggplot(loans, aes(x = credit_util, y = interest_rate)) +
+  geom_point() +
+  geom_smooth(method = "lm")
 ```
 
 -   Interpret the intercept and the slope.
 
-Intercept: Add response here.
+Intercept: For borrowers with 0 credit utilization, the model predicts an interest rate fo 10.5% on average.
 
-Slope: Add response here.
+Slope: For each addiional percentage point in credit utilization, the model predicts the interest rate to be higher at by 0.0473%.
 
 ## Interest rate vs. homeownership
 
@@ -98,18 +131,20 @@ Slope: Add response here.
 
 ```{r}
 #| label: rate-home-fit
-# add code here
+int_home_fit <- linear_reg() |>
+  fit(interest_rate ~ homeownership, data = loans)
+
+tidy(int_home_fit)
 ```
 
 -   Interpret each coefficient in context of the problem.
 
-    -   Intercept: Add response here.
+    -   Intercept: For borrowerswho rent their home, the model predicts an interest rate of 12.9%, on average.
 
     -   Slopes:
 
-        -   Add response here.
-
-        -   Add response here.
+        -   Compared to borrowers who rent their home, borrowers who mortgage their home are predicted to have interest rate that is lower by 0.866%, on average.
+        -   Compared to borrowers who rent their home, borrowers who own their home are predicted to have interest rate that is lower by 0.611%, on average.
 
 ## Interest rate vs. credit utilization and homeownership
 
@@ -119,7 +154,10 @@ Slope: Add response here.
 
 ```{r}
 #| label: rate-util-home-fit
-# add code here
+int_util_home_fit <- linear_reg() |>
+  fit(interest_rate ~ credit_util + homeownership, data = loans)
+
+tidy(int_util_home_fit)
 ```
 
 -   Write the estimated regression equation for loan applications from each of the homeownership groups separately.

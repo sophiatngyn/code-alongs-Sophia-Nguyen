@@ -68,18 +68,28 @@ ggplot(fish, aes(x = height, y = weight)) +
 
 -   If you were to draw a a straight line to best represent the relationship between the heights and weights of fish, where would it go? Why?
 
-Add response here.
+Through the points, not neccessarily going through any given point, but minimizing the distance between the points and the line. 
+
+-   What would you guess is the correlation between these two variables?
+
+~
 
 -   Now, let R draw the line for you! Hint: Use `geom_smooth()`.
 
 ```{r}
 #| label: plot-hw-lm
-# add code here
+ggplot(fish, aes(x = height, y = weight)) + 
+    geom_point() +
+    labs(
+        x = "Height (cm)",
+        y = "Weight (g)"
+    ) +
+    geom_smooth(method = "lm", se = FALSE)
 ```
 
 -   What types of questions can this plot help answer?
-
-Add response here.
+  
+Predictive or explanatory
 
 -   We can use this line to make predictions. Predict what you think the weight of a fish would be with a height of 10 cm, 15 cm, and 20 cm. Which prediction is considered extrapolation?
 
@@ -95,21 +105,10 @@ Add response here.
 
 ```{r}
 #| label: fit-model
-# add code here
-```
+wt_ht_fit <- linear_reg() |>
+    fit(weight ~ height, data = fish)
 
--   Predict what the weight of a fish would be with a height of 10 cm, 15 cm, and 20 cm using this model.
-
-```{r}
-#| label: predict-by-hand
-# add code here
-```
-
--   Calculate predicted weights for all fish in the data and visualize the residuals under this model.
-
-```{r}
-#| label: residuals
-# add code here
+wt_ht_fit
 ```
 
 ## Model summary
@@ -118,12 +117,53 @@ Add response here.
 
 ```{r}
 #| label: model-summary
-# add code here
+wt_ht_tidy <- tidy(wt_ht_fit)
+
+wt_ht_tidy
+```
+
+```{r}
+#| label: intercept
+wt_ht_tidy |>
+    select(term, estimate) |>
+    filter(term == "(Intercept)") |>
+    pull()
+```
+
+```{r}
+#| label: slope
+wt_ht_tidy |>
+    select(term, estimate) |>
+    filter(term == "height") |>
+    pull()
 ```
 
 -   Write out your model using mathematical notation.
 
-Add response here.
+$$ \widehat{weight} = -288+ 60.9 \times height $$
+
+
+-   Predict what the weight of a fish would be with a height of 10 cm, 15 cm, and 20 cm using this model.
+
+```{r}
+#| label: predict-by-hand
+set.seed(12345)
+few_fish <- fish |>
+    sample_n(size = 3) |>
+    select(species, weight, height)
+
+few_fish |>
+    mutate(weight_hat = -288 + 60.9 * height)
+
+```
+
+-   Calculate predicted weights for all fish in the data and visualize the residuals under this model.
+
+```{r}
+#| label: residuals
+augment(wt_ht_fit, new_data = fish)
+```
+
 
 ## Correlation
 
@@ -141,7 +181,8 @@ Add response here.
 
 ```{r}
 #| label: cor
-# add code here
+fish |>
+    summarize(r = cor(weight, height))
 ```
 
 ## Adding a third variable
@@ -150,7 +191,15 @@ Add response here.
 
 ```{r}
 #| label: plot-hws-lm
-# add code here
+ggplot(fish, aes(x = height, y = weight)) + 
+    geom_point() +
+    labs(
+        x = "Height (cm)",
+        y = "Weight (g)"
+    ) +
+    geom_smooth(method = "lm", se = FALSE, color = "gray") +
+    geom_smooth(data = fish |> filter(species == "Bream"), method = "lm", se = FALSE, color = "red") +
+    geom_smooth(data = fish |> filter(species == "Roach"), method = "lm", se = FALSE, color = "blue")
 ```
 
 ## Fitting other models
@@ -159,5 +208,11 @@ Add response here.
 
 ```{r}
 #| label: plot-hw-loess
-# add code here
+ggplot(fish, aes(x = height, y = weight)) + 
+    geom_point() +
+    labs(
+        x = "Height (cm)",
+        y = "Weight (g)"
+    ) +
+    geom_smooth(method = "loess")
 ```
