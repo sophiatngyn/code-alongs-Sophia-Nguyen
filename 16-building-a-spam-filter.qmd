@@ -39,7 +39,17 @@ Create an density plot to investigate the relationship between `spam` and `excla
 Additionally, calculate the mean number of exclamation points for both spam and non-spam emails.
 
 ```{r}
-# add code here
+ggplot(email, aes(x = exclaim_mess, color = spam)) + 
+    geom_density() +
+    facet_wrap(~spam, ncol = 1)
+```
+
+```{r}
+email |>
+    group_by(spam) |>
+    summarize(
+        mean_exclaims = mean(exclaim_mess)
+    )
 ```
 
 # Linear model -- a false start
@@ -52,7 +62,8 @@ Fit a linear regression model to whether an email is spam from the number of exc
 
 ```{r}
 #| label: lm-fit
-# add code here
+linear_reg() |>
+    fit(as.numeric(spam) ~ exclaim_mess, data = email)
 ```
 
 ## Visualize
@@ -61,12 +72,14 @@ Visualizate the linear model.
 
 ```{r}
 #| label: lm-viz
-# add code here
+ggplot(email, aes(x = exclaim_mess, y = as.numeric(spam))) +
+    geom_point() + 
+    geom_smooth(method = "lm")
 ```
 
 -   Is the linear model a good fit for the data? Why or why not?
 
-Add response here.
+No. # this outome/factor variable not good for inserting into/doesn't work with linear model
 
 # Logistic regression -- a different approach
 
@@ -91,14 +104,17 @@ Fit a logistic regression model to predict the probability an email is spam from
 
 ```{r}
 #| label: log-fit
-# add code here
+spam_exclaim_mess_fit <- logistic_reg() |>
+    fit(spam ~ exclaim_mess, data = email)
+
+tidy(spam_exclaim_mess_fit)
 ```
 
 ## Summarize
 
 Write the estimated model.
 
-$$\log\Big(\frac{p}{1-p}\Big) = -2.27 - 0.000272 \times exclaim\_mess$$
+$$\log\Big(\frac{p}{1-p}\Big) = -2.27 + 0.000272 \times exclaim\_mess$$
 
 # Predict
 
@@ -107,7 +123,8 @@ Answer the question using the `predict()` function.
 
 ```{r}
 #| label: log-pred
-# add code here
+new_email <- tibble(exclaim_mess = 10)
+predict(spam_exclaim_mess_fit, new_data = new_email, type = "prob")
 ```
 
 # Classify
@@ -129,7 +146,11 @@ Classify the emails in this dataset as spam or not spam.
 
 ```{r}
 #| label: log-aug
-# add code here
+spam_exclaim_mess_aug <- augment(spam_exclaim_mess_fit, new_data = email
+)
+
+spam_exclaim_mess_aug |>
+    count(spam, .pred_class)
 ```
 
 # Model 2: All predictors
@@ -138,5 +159,14 @@ Fit a model with **all** variables in the dataset as predictors and receate the 
 
 ```{r}
 #| label: log2
-# add code here
+spam_fit <- logistic_reg() |>
+    fit(spam ~ ., data = email)
+
+tidy(spam_fit) |>
+    print(n = 22)
+
+spam_aug <- augment(spam_fit, new_data = email)
+
+spam_aug |>
+    count(spam, .pred_class)
 ```
