@@ -154,19 +154,40 @@ tidy(int_home_fit)
 
 ```{r}
 #| label: rate-util-home-fit
-int_util_home_fit <- linear_reg() |>
+int_util_home_main_fit <- linear_reg() |>
   fit(interest_rate ~ credit_util + homeownership, data = loans)
 
 tidy(int_util_home_fit)
 ```
 
 -   Write the estimated regression equation for loan applications from each of the homeownership groups separately.
-    -   Rent: $add~math~text~here$
-    -   Mortgage: $add~math~text~here$
-    -   Own: $add~math~text~here$
+   
+predicted interest rate = intercept + slope1(credit_util) + slope2(homeownershipMortgage) + slope3(homeownership0wn)
+
+    -   Rent: $$ \widehat{interest~rate} = 9.93 + 5.34 * credit\_util $$
+
+predicted interest rate = intercept + slope1(credit_util)
+
+predicted interest  = 9.93 + 5.34(credit_util)
+
+    -   Mortgage: $$ \widehat{interest~rate} = 10.626 + 5.34 * credit\_util $$
+
+
+predicted interest rate = intercept + slope1(credit_util) + slope2(homeownershipMortgage)
+predicted interest  = 9.93 + 5.34(credit_util) + 0.696(1)
+predicted interest = 10.626 + 5.34(credit_util)
+
+
+    -   Own: $$ \widehat{interest~rate} = 10.058 + 5.34 * credit\_util $$
+
+predicted interest rate = 9.93 + slope1(credit_util) + slope2(homeownershipMortgage) + slope3(homeownership0wn)
+predicted interest  = 9.93 + 5.34(credit_util) + 0.696(0) + 0.128(1)
+predicted interest  = 9.93 + 5.34(credit_util) + 0.128(1)
+predicted interest = 10.058 + 5.34(credit_util)
+
 -   How does the model predict the interest rate to vary as credit utilization varies for loan applicants with different homeownership status. Are the rates the same or different?
 
-Add response here.
+Same, only intercept changes.
 
 ### Interaction effects model
 
@@ -174,16 +195,32 @@ Add response here.
 
 ```{r}
 #| label: rate-util-home-int-fit
-# add code here
+int_util_home_interaction_fit <- linear_reg() |>
+  fit(interest_rate ~ credit_util * homeownership, data = loans)
+
+tidy(int_util_home_interaction_fit)
 ```
 
+predicted interest rate = intercept 
+  + slope1(credit_util) 
+  + slope2(homeownershipMortgage) 
+  + slope3(homeownership0wn)
+  + slope4(credit_util * homeownershipMortgage) 
+  + slope5(credit_util * homeownership0wn)
+
+
+
 -   Write the estimated regression equation for loan applications from each of the homeownership groups separately.
-    -   Rent: $add~math~text~here$
-    -   Mortgage: $add~math~text~here$
-    -   Own: $add~math~text~here$
+    -   Rent: $$\widehat{interest\_rate} = 9.44 + 6.20(credit\_util)$$
+    -   Mortgage: $$\widehat{interest\_rate} = 10.83 + 4.56(credit\_util)$$
+   
+predicted interest rate = 9.44 + (6.20 * credit_util) + 1.39 + (-1.64 * credit_util)
+                        = 10.83 + 4.56(credit_util)
+
+    -   Own: $$\widehat{interest\_rate} = 10.058 + 5.34(credit\_util)$$
 -   How does the model predict the interest rate to vary as credit utilization varies for loan applicants with different homeownership status. Are the rates the same or different?
 
-Add response here.
+The rates are different. There are 3 lines with different intercepts AND different slopes.
 
 ### Choosing a model
 
@@ -194,16 +231,18 @@ We prefer the *simplest* best model.
 
 ```{r}
 #| label: glance
-# add code here
+glance(int_util_home_main_fit)
+glance(int_util_home_interaction_fit)
 ```
 
 -   What is R-squared? What is adjusted R-squared?
 
-Add response here.
+Proportion or percentage of variability in Y or the outcome variable explained by the model (interaction or main effects model)
+Adusted: r-squared + penalty for the number of predictors (the number of columns we used to consider and make the data set)
 
 -   Based on the adjusted $R^2$s of these two models, which one do we prefer?
 
-Add response here.
+The one with the higher r-squared so the interaction effect.
 
 ## Another model to consider
 
