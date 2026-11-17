@@ -31,7 +31,10 @@ Split your data into testing and training in a reproducible manner and display t
 
 ```{r}
 #| label: train-test-split
-# add code here
+set.seed(12345)
+forested_split <- initial_split(forested)
+
+forested_split
 ```
 
 What percent of the original `forested` data is allocated to training and what percent to testing?
@@ -41,22 +44,24 @@ What determines this in the `initial_split()`?
 How would the code need to be updated to allocate 80% of the data to training and the remaining 20% to testing?
 
 ```{r}
-#| label: train-test-percentages
-# add code here
+#| label: train-test-percentages-75-25-split
+5330 / nrow(forested)
+1777 / nrow(forested)
 ```
 
-Add response here.
+75/25 by default
 
 ```{r}
 #| label: train-test-80-20
-# add code here
+initial_split(forested, prop = 0.8)
 ```
 
 Let's stick with the default split and save our testing and training data.
 
 ```{r}
 #| label: train-test-save
-# add code here
+forested_train <- training(forested_split)
+forested_test <- testing(forested_split)
 ```
 
 # Exploratory data analysis
@@ -68,7 +73,16 @@ Then, describe, in a few sentences, what the visualization shows about the relat
 
 ```{r}
 #| label: eda-plot
-# add code here
+forested_train |>
+    ggplot(aes(x = temp_annual_mean, fill = forested)) +
+    geom_histogram() +
+    facet_wrap(~land_type, ncol = 1) +
+    scale_fill_manual(
+        values = c(
+            "Yes" = "forestgreen",
+            "No" = "gold"
+        )
+    )
 ```
 
 Add response here.
@@ -82,7 +96,10 @@ Name the model `forested_custom_fit` and display a tidy output of the model.
 
 ```{r}
 #| label: forested-custom-fit
-# add code here
+forested_custom_fit <- logistic_reg() |>
+    fit(forested ~ elevation + lat + lon + temp_annual_mean + tree_no_tree, data = forested_train)
+
+tidy(forested_custom_fit)
 ```
 
 ## Predict
@@ -91,7 +108,7 @@ Predict for the testing data using this model.
 
 ```{r}
 #| label: forested-custom-aug
-# add code here
+forested_custom_aug <- augment(forested_custom_fit, new_data = forested_test)
 ```
 
 ## Evaluate
@@ -100,7 +117,16 @@ Calculate the false positive and false negative rates for the testing data using
 
 ```{r}
 #| label: forested-custom-eval
-# add code here
+forested_custom_aug |>
+    count(forested, .pred_class) |>
+    group_by(forested) |>
+    mutate(p = n / sum(n),
+    label = case_when(
+        forested == "Yes" & .pred_class == "Yes" ~ "True positive",
+        forested == "Yes" & .pred_class == "No" ~ "False negative",
+        forested == "No" & .pred_class == "Yes" ~ "False positive",
+        forested == "No" & .pred_class == "No" ~ "True negative",
+    ))
 ```
 
 Another commonly used display of this information is a confusion matrix.
@@ -109,7 +135,11 @@ You will need to review the documentation for the function to determine how to u
 
 ```{r}
 #| label: conf-mat-custom
-# add code here
+conf_mat(
+    forested_custom_aug, 
+    truth = forested,
+    estimate = .pred_class
+)
 ```
 
 ## Sensitivity, specificity, ROC curve
@@ -118,7 +148,14 @@ Calculate sensitivity and specificity and draw the ROC curve.
 
 ```{r}
 #| label: forested-custom-roc
-# add code here
+forested_custom_roc <- roc_curve(
+    forested_custom_aug, truth = forested, .pred_Yes
+)
+
+ggplot(forested_custom_roc, aes(x = 1 - specificity, y = sensitivity)) +
+    geom_path() + 
+    geom_abline(linetype = "dashed") + 
+    coord_equal()
 ```
 
 # Model 2: All predictors
@@ -130,7 +167,10 @@ Name the model `forested_full_fit` and display a tidy output of the model.
 
 ```{r}
 #| label: forested-full-fit
-# add code here
+forested_full_fit <- logistic_reg() |>
+    fit(forested ~ ., data = forested_train)
+
+tidy(forested_full_fit)
 ```
 
 ## Predict
@@ -139,7 +179,9 @@ Predict for the testing data using this model.
 
 ```{r}
 #| label: forested-full-aug
-# add code here
+forested_full_aug <- augment(forested_full_fit, new_data = forested_test)
+
+forested_full_aug
 ```
 
 ## Evaluate
@@ -148,8 +190,20 @@ Calculate the false positive and false negative rates for the testing data using
 
 ```{r}
 #| label: forested-full-eval
-# add code here
+forested_full_roc <- forested_full_aug |>
+    count(forested, .pred_class) |>
+    group_by(forested) |>
+    mutate(
+        prop = n / sum(n),
+        label = case_when(
+            forested == "Yes" & .pred_class == "Yes" ~ "True positive",
+            forested == "Yes" & .pred_class == "No" ~ "False negative",
+            forested == "No" & .pred_class == "Yes" ~ "False positive",
+            forested == "No" & .pred_class == "No" ~ "True negative",
+        )
+    )
 ```
+
 
 ## Sensitivity, specificity, ROC curve
 
@@ -157,7 +211,18 @@ Calculate sensitivity and specificity and draw the ROC curve.
 
 ```{r}
 #| label: forested-full-roc
-# add code here
+forested_full_roc <- roc_curve(
+    forested_full_aug,  
+    truth = forested,
+    .pred_Yes
+)
+```
+
+```{r}
+ggplot(forested_full_roc, aes(x = 1 - specificity, y = sensitivity)) +
+    geom_path() + 
+    geom_abline(linetype = "dashed") + 
+    coord_equal()
 ```
 
 # Model 1 vs. Model 2
@@ -166,7 +231,15 @@ Plot both ROC curves and articulate how you would use them to compare these mode
 
 ```{r}
 #| label: compare
-# add code here
+forested_roc <- bind_rows(
+    forested_custom_roc |> mutate(model = "Custon"),
+    forested_full_roc |> mutate(model = "Full")
+)
+
+ggplot(forested_roc, aes(x = 1 - specificity, y = sensitivity, color = "model")) +
+    geom_path() + 
+    geom_abline(linetype = "dashed") + 
+    coord_equal()
 ```
 
-Add response here.
+
